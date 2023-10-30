@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @unique @default(uuid())
+  email         String         @unique
+  emailVerified Boolean @default(false)
+  password      String
+  username      String         @unique
+  streamKey     String         @unique @default(uuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  pfp           String         @default("default.webp")
+  description   String         @default("Welcome to my channel.")
+  refreshTokens RefreshToken[]
+  bans          Ban[] @relation("bannedUser")
+  bannedOnChannel Ban[] @relation("bannedOnChannel")
+  messagesSent  Message[] @relation("sentBy")
+  sentOnChannel Message[] @relation("sentOn")
+  isLive        Live[]
+  follows       Follow[] @relation("followingUser")
+  followedBy    Follow[] @relation("followedChannel")
+  modOn         Mod[] @relation("Mod on channels")
+  moddedHere    Mod[] @relation("Mods on this channel")
+  vipOn         Vip[] @relation("Vip on channels")
+  vipsHere      Vip[] @relation("Vips on this channel")
+  Files Uploaded[]
+  VeryficationCodes VeryficationCode[]
+}
+
+
+model VeryficationCode{
+  id String @id @unique @default(uuid())
+  code String
+  email String
+  user User @relation(fields: [email], references: [email])
+  expirationDate DateTime
+}
+model Uploaded{
+  id String @id @unique @default(uuid())
+  title String
+  onChannel String
+  channel User @relation(fields: [onChannel], references: [username])
+}
+
+model Live{
+  id String @id @unique @default(uuid())
+  live Boolean @default(false)
+  title String @default("Stream...")
+  channelName String @unique
+  channel User @relation(fields: [channelName], references: [username])
+  categoryName String @default("Just chatting")
+  category Category @relation(fields: [categoryName], references: [name])
+  pid Int
+  pid2 Int
+}
+
+model Vip{
+  id         String @id @default(uuid())
+  username   String
+  vip User @relation("Vip on channels", fields: [username], references: [username])
+  channel    String
+  vipOnChannel   User @relation("Vips on this channel", fields: [channel], references: [username])
+  vipSince   DateTime @default(now())
+}
+
+model Follow{
+  id         String @id @default(uuid())
+  username   String
+  userFollowing User @relation("followingUser", fields: [username], references: [username])
+  channel    String
+  channelFollowed   User @relation("followedChannel", fields: [channel], references: [username])
+  followingSince   DateTime @default(now())
+}
+
+model Mod{
+  id         String @id @default(uuid())
+  username   String
+  mod User @relation("Mod on channels", fields: [username], references: [username])
+  channel    String
+  modOnChannel   User @relation("Mods on this channel", fields: [channel], references: [username])
+  modSince   DateTime @default(now())
+}
+
+
+model Category{
+  id String @id @unique @default(uuid())
+  name String @unique
+  live Live[]
+}
+
+
+model RefreshToken {
+  id          String   @id @unique @default(uuid())
+  hashedToken String
+  userId      String
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Ban{
+  id         Int @id @default(autoincrement())
+  username   String
+  userBanned User @relation("bannedUser", fields: [username], references: [username])
+  channel    String
+  bannedOn   User @relation("bannedOnChannel", fields: [channel], references: [username])
+  bannedAt   DateTime @default(now())
+}
+
+model Message{
+  id         Int @id @default(autoincrement())
+  username   String
+  sentBy     User @relation("sentBy", fields: [username], references: [username])
+  channel    String
+  SentOn     User @relation("sentOn", fields: [channel], references: [username])
+  content    String
+  sentOn     DateTime @default(now())
+}
