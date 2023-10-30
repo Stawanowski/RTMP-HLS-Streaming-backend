@@ -11,9 +11,9 @@ Recommended file tree:
     └── var/
         ├── www/
         │   ├── transcode.sh
-        │   └── transcodeTosd.sh
-        └── hls/
-             └── native/
+        │   ├── transcodeTosd.sh
+        │   └── hls/
+                 └── native/
 
 Configure nginx and transcoding scripts
 ```
