@@ -3,6 +3,7 @@
 ## Setup
 
 Recommended file tree:
+
     /
     ├── etc /
     │   └── nginx/
@@ -12,7 +13,7 @@ Recommended file tree:
         │   ├── transcode.sh
         │   └── transcodeTosd.sh
         └── hls/
-            └── native/
+             └── native/
 
 Configure nginx and transcoding scripts
 ```
