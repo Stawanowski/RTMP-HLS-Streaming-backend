@@ -1,5 +1,7 @@
 # ExpressJS Streaming, authentication and ftp backend
 
+Work in progress...
+
 ## Setup
 
 Recommended file tree:
